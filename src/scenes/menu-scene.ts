@@ -1,7 +1,7 @@
 export class MenuScene extends Phaser.Scene {
   private startKey: Phaser.Input.Keyboard.Key;
   private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
-
+  private upKey: Phaser.Input.Keyboard.Key;
   constructor() {
     super({
       key: "MenuScene"

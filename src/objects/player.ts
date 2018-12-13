@@ -110,8 +110,12 @@ export class Player extends Phaser.GameObjects.Image {
     let currentLives = this.currentScene.registry.get("lives");
     this.currentScene.registry.set("lives", currentLives - 1);
     this.currentScene.events.emit("livesChanged");
-
     // reset position
+    this.cursors.down.isDown = false;
+    this.cursors.right.isDown = false;
+    this.cursors.up.isDown = false;
+    this.cursors.left.isDown = false;
+    this.shootingKey.isDown = false;
     this.x = this.currentScene.sys.canvas.width / 2;
     this.y = this.currentScene.sys.canvas.height - 40;
   }
