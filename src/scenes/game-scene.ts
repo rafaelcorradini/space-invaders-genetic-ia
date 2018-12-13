@@ -61,6 +61,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.registry.get("lives") < 0 || this.enemies.getLength() === 0) {
+      this.registry.set("level", this.registry.get("level")+1);
       this.scene.start("MenuScene");
       this.scene.stop("HUDScene");
     }

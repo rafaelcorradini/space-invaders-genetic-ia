@@ -32,6 +32,16 @@ export class HUDScene extends Phaser.Scene {
       )
     );
 
+    this.bitmapTexts.push(
+      this.add.bitmapText(
+        this.scene.systems.canvas.width - 85,
+        this.scene.systems.canvas.height - 20,
+        "font",
+        `Gen: ${this.registry.get("level")}`,
+        8
+      )
+    );
+
     // create events
     const level = this.scene.get("GameScene");
     level.events.on("pointsChanged", this.updatePoints, this);
