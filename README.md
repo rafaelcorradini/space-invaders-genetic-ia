@@ -43,4 +43,4 @@ The game was based on a space invaders example: https://github.com/digitsensitiv
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/rafaelcorradini/space-invaders-genetic-ia/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/rafaelcorradini/space-invaders-genetic-ia/blob/master/LICENSE) file for details
