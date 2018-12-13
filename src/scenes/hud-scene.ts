@@ -1,6 +1,6 @@
 export class HUDScene extends Phaser.Scene {
   private bitmapTexts: Phaser.GameObjects.BitmapText[];
-
+  private saved;
   constructor() {
     super({
       key: "HUDScene"
@@ -13,6 +13,7 @@ export class HUDScene extends Phaser.Scene {
 
   create(): void {
     // create bitmap texts
+    this.saved = JSON.parse(localStorage.getItem('generation'));
     this.bitmapTexts.push(
       this.add.bitmapText(
         10,
@@ -37,7 +38,7 @@ export class HUDScene extends Phaser.Scene {
         this.scene.systems.canvas.width - 85,
         this.scene.systems.canvas.height - 20,
         "font",
-        `Gen: ${this.registry.get("level")}`,
+        `Gen: ${this.saved.number}`,
         8
       )
     );

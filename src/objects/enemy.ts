@@ -19,8 +19,9 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private moveTween: Phaser.Tweens.Tween;
   private reloadTime: number;
   private valueKill: number;
-  public fitness: number;
+  public fitness: number = 0;
   public moveTime: number;
+  public id: number;
 
   public getBullets(): Phaser.GameObjects.Group {
     return this.bullets;
@@ -48,6 +49,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.hurtingTime = 200;
     this.isHurt = false;
     this.moveTime = params.moveTime;
+    this.id = params.id;
 
     // set the characteristics of the specific enemy
     switch (this.enemyType) {
