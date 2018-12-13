@@ -15,7 +15,7 @@ Select a folder, navigate to it, and clone this repository
 with this command-line:
 
 ```
-git clone https://github.com/digitsensitive/phaser3-typescript.git
+git clone https://github.com/rafaelcorradini/space-invaders-genetic-ia.git
 ```
 
 Install the dependencies with this command-line:
@@ -43,4 +43,4 @@ The game was based on a space invaders example: https://github.com/digitsensitiv
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/digitsensitive/phaser3-typescript/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/rafaelcorradini/space-invaders-genetic-ia/LICENSE) file for details
