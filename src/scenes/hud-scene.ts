@@ -14,6 +14,11 @@ export class HUDScene extends Phaser.Scene {
   create(): void {
     // create bitmap texts
     this.saved = JSON.parse(localStorage.getItem('generation'));
+    if (this.saved == null || this.saved == undefined) {
+      this.saved = {
+        number: 1
+      };
+    }
     this.bitmapTexts.push(
       this.add.bitmapText(
         10,
