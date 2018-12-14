@@ -1,5 +1,6 @@
 export class MenuScene extends Phaser.Scene {
   private startKey: Phaser.Input.Keyboard.Key;
+  private resetKey: Phaser.Input.Keyboard.Key;
   private bitmapTexts: Phaser.GameObjects.BitmapText[] = [];
   private upKey: Phaser.Input.Keyboard.Key;
   constructor() {
@@ -12,6 +13,10 @@ export class MenuScene extends Phaser.Scene {
     this.startKey = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.S
     );
+    this.resetKey = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.R
+    );
+    this.resetKey.isDown = false;
     this.startKey.isDown = false;
     this.initRegistry();
   }
@@ -23,6 +28,16 @@ export class MenuScene extends Phaser.Scene {
         this.sys.canvas.height / 2,
         "font",
         "PRESS S TO PLAY",
+        8
+      )
+    );
+
+    this.bitmapTexts.push(
+      this.add.bitmapText(
+        this.sys.canvas.width / 2 - 70,
+        this.sys.canvas.height / 2 + 30,
+        "font",
+        "PRESS R TO RESET",
         8
       )
     );
@@ -43,6 +58,10 @@ export class MenuScene extends Phaser.Scene {
       this.scene.start("HUDScene");
       this.scene.start("GameScene");
       this.scene.bringToTop("HUDScene");
+    }
+
+    if (this.resetKey.isDown) {
+      localStorage.clear();
     }
   }
 
