@@ -66,6 +66,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   nextGen(): void {
+    let enemyTypes = ['octopus', 'crab', 'squid'];
     let best1: any = { fitness: -1 };
     let best2: any = { fitness: -1 };
     this.saved.enemies.map((enemy) => {
@@ -80,44 +81,70 @@ export class GameScene extends Phaser.Scene {
       enemies: []
     };
     let id = 0;
+    let spd = 0;
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 10; x++) {
-        if (y % 2 === 0) {
+        let type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+        const moveTime = Math.floor(Math.random() * 5000) + 2000;
+        if (y !== 4){
+        let form = type;
+        let mutate_chance = 10;
+        let mutation = Math.random() * 100;
+          if (y % 2 === 0) {
+                  spd = best1.moveTime;
+                  form = best2.key;
+                }
+          else {
+                  spd = best2.moveTime;
+                  form = best1.key;
+                }
+           if (mutation <= mutate_chance){
+               if (mutation<5){
+                  spd = moveTime;
+               }
+               else{
+                  form = type;
+               }
+           }
           this.enemies.add(
             new Enemy({
-              scene: this,
-              x: 20 + x * 15,
-              y: 50 + y * 15,
-              moveTime: best1.moveTime,
-              key: best2.key,
-              id: id
+            scene: this,
+            x: 20 + x * 15,
+            y: 50 + y * 15,
+            moveTime: spd,
+            key: form,
+            id: id
             })
-          );
-          this.generation.enemies.push({
-            moveTime: best2.moveTime,
-            key: best1.key,
-            fitness: 0
-          });
-        } else {
-          this.enemies.add(
-            new Enemy({
-              scene: this,
-              x: 20 + x * 15,
-              y: 50 + y * 15,
-              moveTime: best2.moveTime,
-              key: best1.key,
-              id: id
-            })
-          );
-          this.generation.enemies.push({
-            moveTime: best2.moveTime,
-            key: best1.key,
-            fitness: 0
-          });
-        }
-        id++;
-      }
-    }
+        );
+                this.generation.enemies.push({
+                moveTime: spd,
+                key: form,
+                fitness: 0
+                });
+                id++;
+              }
+              else{
+                  let id = 0;
+                  const moveTime = Math.floor(Math.random() * 5000) + 2000;
+                  this.enemies.add(
+                    new Enemy({
+                      scene: this,
+                      x: 20 + x * 15,
+                      y: 50 + y * 15,
+                      moveTime: moveTime,
+                      key: type,
+                      id: id
+                    })
+                  );
+                  this.generation.enemies.push({
+                    moveTime: moveTime,
+                    key: type,
+                    fitness: 0
+                  });
+                  id++;
+                }
+              }
+            }
     localStorage.setItem('generation', JSON.stringify(this.generation));
   }
 
