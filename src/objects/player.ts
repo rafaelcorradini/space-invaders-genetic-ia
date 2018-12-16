@@ -1,10 +1,3 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @description  Space Invaders: Player
- * @license      Digitsensitive
- */
-
 import { Bullet } from "./bullet";
 
 export class Player extends Phaser.GameObjects.Image {

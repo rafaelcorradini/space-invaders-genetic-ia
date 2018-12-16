@@ -1,11 +1,4 @@
 /**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @description  Animation Helper
- * @license      Digitsensitive
- */
-
-/**
  * Configs taken from official Phaser library code and edited
  *
  * AnimationConfig

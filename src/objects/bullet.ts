@@ -1,10 +1,3 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @description  Space Invaders: Bullet
- * @license      Digitsensitive
- */
-
 export class Bullet extends Phaser.GameObjects.Image {
   private currentScene: Phaser.Scene;
   private bulletSpeed: number;

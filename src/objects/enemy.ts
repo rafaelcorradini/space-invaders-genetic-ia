@@ -1,10 +1,3 @@
-/**
- * @author       Digitsensitive <digit.sensitivee@gmail.com>
- * @copyright    2018 Digitsensitive
- * @description  Space Invaders: Enemy
- * @license      Digitsensitive
- */
-
 import { Bullet } from "./bullet";
 
 export class Enemy extends Phaser.GameObjects.Sprite {
