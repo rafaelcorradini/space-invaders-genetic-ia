@@ -1,6 +1,9 @@
 
 # Space invaders with genetic algorithm
 
+## Demo site
+See the project running: https://spaceinvaders.rafaelcdacunha.com.br/ 
+
 ## Getting started
 
 ### Prerequisites
