@@ -7,6 +7,9 @@ export class Player extends Phaser.GameObjects.Image {
   private flyingSpeed: number;
   private lastShoot: number;
   private shootingKey: Phaser.Input.Keyboard.Key;
+  private randomKey: Phaser.Input.Keyboard.Key;
+  private normalKey: Phaser.Input.Keyboard.Key;
+  private random: boolean = false;
   public getBullets(): Phaser.GameObjects.Group {
     return this.bullets;
   }
@@ -40,6 +43,12 @@ export class Player extends Phaser.GameObjects.Image {
     this.shootingKey = this.currentScene.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.SPACE
     );
+    this.randomKey = this.currentScene.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.I
+    );
+    this.normalKey = this.currentScene.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.O
+    );
   }
 
   private initPhysics(): void {
@@ -48,8 +57,26 @@ export class Player extends Phaser.GameObjects.Image {
   }
 
   update(): void {
-    this.handleFlying();
-    this.handleShooting();
+    if (this.randomKey.isDown) {
+      this.random = true;
+    }
+    if (this.normalKey.isDown) {
+      this.random = false;
+    }
+    if (this.random) {
+      this.handleFlyingRandom();
+      this.handleShootingRandom();
+    } else {
+      this.handleFlying();
+      this.handleShooting();
+    }
+    
+  }
+
+  private handleFlyingRandom(): void {
+    if (Phaser.Math.RND.between(0, 10) === 0) {
+      this.body.setVelocityX(Phaser.Math.RND.between(-100, 100));
+    }    
   }
 
   private handleFlying(): void {
@@ -63,15 +90,34 @@ export class Player extends Phaser.GameObjects.Image {
     } else {
       this.body.setVelocityX(0);
     }
-    if (
-      this.cursors.down.isDown &&
-      this.y < this.currentScene.sys.canvas.height - this.width / 2
-    ) {
-      this.body.setVelocityY(this.flyingSpeed);
-    } else if (this.cursors.up.isDown && this.y > this.height / 2) {
-      this.body.setVelocityY(-this.flyingSpeed);
-    } else {
-      this.body.setVelocityY(0);
+    // vertical move
+    // if (
+    //   this.cursors.down.isDown &&
+    //   this.y < this.currentScene.sys.canvas.height - this.width / 2
+    // ) {
+    //   this.body.setVelocityY(this.flyingSpeed);
+    // } else if (this.cursors.up.isDown && this.y > this.height / 2) {
+    //   this.body.setVelocityY(-this.flyingSpeed);
+    // } else {
+    //   this.body.setVelocityY(0);
+    // }
+  }
+
+  private handleShootingRandom(): void {
+    if (Phaser.Math.RND.between(0, 2) === 0) {
+      this.bullets.add(
+        new Bullet({
+          scene: this.currentScene,
+          x: this.x,
+          y: this.y - this.height,
+          key: "bullet",
+          bulletProperties: {
+            speed: -300
+          }
+        })
+      );
+
+      this.lastShoot = this.currentScene.time.now + 500;
     }
   }
 
