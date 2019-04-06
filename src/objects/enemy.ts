@@ -1,3 +1,4 @@
+import { Player } from './player';
 import { Bullet } from "./bullet";
 
 export class Enemy extends Phaser.GameObjects.Sprite {
@@ -12,9 +13,11 @@ export class Enemy extends Phaser.GameObjects.Sprite {
   private moveTween: Phaser.Tweens.Tween;
   private reloadTime: number;
   private valueKill: number;
+  private player: Player;
   public fitness: number = 0;
-  public moveTime: number;
+  public moveGap: number;
   public id: number;
+  public flyingSpeed: number = 50;
 
   public getBullets(): Phaser.GameObjects.Group {
     return this.bullets;
@@ -27,7 +30,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.initImage();
     this.initPhysics();
 
-    this.initTweens();
+    // this.initTweens();
+    this.player = params.player;
 
     this.currentScene.add.existing(this);
   }
@@ -41,7 +45,7 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.enemyType = params.key;
     this.hurtingTime = 200;
     this.isHurt = false;
-    this.moveTime = params.moveTime;
+    this.moveGap = params.moveGap;
     this.id = params.id;
 
     // set the characteristics of the specific enemy
@@ -50,24 +54,24 @@ export class Enemy extends Phaser.GameObjects.Sprite {
         this.dyingTime = 100;
         this.enemyTint = 0xffffff;
         this.lives = 1;
-        this.reloadTime = 9000;
-        this.valueKill = 20;
+        this.reloadTime = 1000;
+        this.valueKill = 40;
         break;
 
       case "crab":
         this.dyingTime = 120;
         this.enemyTint = 0x42a4aa;
         this.lives = 2;
-        this.reloadTime = 10000;
+        this.reloadTime = 5000;
         this.valueKill = 40;
         break;
 
       case "squid":
         this.dyingTime = 140;
         this.enemyTint = 0x4a4e4d;
-        this.lives = 2;
-        this.reloadTime = 12000;
-        this.valueKill = 60;
+        this.lives = 5;
+        this.reloadTime = 15000;
+        this.valueKill = 40;
 
         break;
     }
@@ -84,17 +88,17 @@ export class Enemy extends Phaser.GameObjects.Sprite {
     this.body.setSize(12, 8);
   }
 
-  private initTweens(): void {
-    this.moveTween = this.currentScene.tweens.add({
-      targets: this,
-      x: this.x + Math.floor((Math.random() * 100) + 1),
-      y: this.y + Math.floor((Math.random() * 100) + 1),
-      ease: "Power0",
-      duration: this.moveTime,
-      yoyo: true,
-      repeat: -1
-    });
-  }
+  // private initTweens(): void {
+  //   this.moveTween = this.currentScene.tweens.add({
+  //     targets: this,
+  //     x: this.x + Math.floor((Math.random() * 100) + 1),
+  //     y: this.y + Math.floor((Math.random() * 100) + 1),
+  //     ease: "Power0",
+  //     duration: this.moveGap,
+  //     yoyo: true,
+  //     repeat: -1
+  //   });
+  // }
 
   update(): void {
     if (this.active) {
@@ -113,6 +117,8 @@ export class Enemy extends Phaser.GameObjects.Sprite {
           })
         );
       }
+
+      this.handleFlying();
 
       if (this.isHurt) {
         this.setTint(0xfc8a75);
@@ -146,6 +152,16 @@ export class Enemy extends Phaser.GameObjects.Sprite {
       this.setActive(false);
     } else {
       this.isHurt = true;
+    }
+  }
+
+  private handleFlying(): void {
+    if (
+      Phaser.Math.RND.between(-this.moveGap, this.moveGap) + this.x < this.player.x
+    ) {
+      this.body.setVelocityX(Phaser.Math.RND.between(this.flyingSpeed - 50, this.flyingSpeed));
+    } else {
+      this.body.setVelocityX((-1) * Phaser.Math.RND.between(this.flyingSpeed - 50, this.flyingSpeed));
     }
   }
 

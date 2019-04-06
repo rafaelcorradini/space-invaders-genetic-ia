@@ -6,7 +6,7 @@ export class GameScene extends Phaser.Scene {
   private enemies: Phaser.GameObjects.Group;
   private player: Player;
   private generation: any;
-  private saved: any;
+  private history: any;
   constructor() {
     super({
       key: 'GameScene'
@@ -27,9 +27,16 @@ export class GameScene extends Phaser.Scene {
     });
 
     // get generation saved on localstorage
-    this.saved = JSON.parse(localStorage.getItem('generation'));
+    this.generation = localStorage.getItem('generation');
+    this.history = localStorage.getItem('historyFitness');
+    if (!this.history) {
+      this.history = [];
+    } else {
+      this.history = JSON.parse(this.history);
+    }
 
-    if (this.saved !== null && this.saved !== undefined) {
+    if (this.generation !== null && this.generation !== undefined) {
+      this.generation = JSON.parse(this.generation);
       this.nextGen();
     } else {
       // generate random enemies
@@ -42,19 +49,20 @@ export class GameScene extends Phaser.Scene {
       for (let y = 0; y < 5; y++) {
         for (let x = 0; x < 10; x++) {
           let type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-          const moveTime = Math.floor(Math.random() * 5000) + 2000;
+          const moveGap = Phaser.Math.RND.between(-50, 50);
           this.enemies.add(
             new Enemy({
               scene: this,
               x: 20 + x * 15,
               y: 50 + y * 15,
-              moveTime: moveTime,
+              moveGap: moveGap,
               key: type,
-              id: id
+              id: id,
+              player: this.player
             })
           );
           this.generation.enemies.push({
-            moveTime: moveTime,
+            moveGap: moveGap,
             key: type,
             fitness: 0
           });
@@ -69,15 +77,18 @@ export class GameScene extends Phaser.Scene {
     let enemyTypes = ['octopus', 'crab', 'squid'];
     let best1: any = { fitness: -1 };
     let best2: any = { fitness: -1 };
-    this.saved.enemies.map((enemy) => {
+    this.generation.enemies.map((enemy) => {
       if (best1.fitness < enemy.fitness) {
         best1 = enemy;
       } else if (best2.fitness < enemy.fitness) {
         best2 = enemy;
       }
     });
+    const bestFitness = Math.max(best1.fitness, best2.fitness);
+    this.history.push(bestFitness);
+    localStorage.setItem('historyFitness', JSON.stringify(this.history));
     this.generation = {
-      number: this.saved.number + 1,
+      number: this.generation.number + 1,
       enemies: []
     };
     let id = 0;
@@ -85,22 +96,22 @@ export class GameScene extends Phaser.Scene {
     for (let y = 0; y < 5; y++) {
       for (let x = 0; x < 10; x++) {
         let type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-        const moveTime = Math.floor(Math.random() * 5000) + 2000;
+        const moveGap = Phaser.Math.RND.between(-50, 50);
         if (y !== 4) {
           let form = type;
           let mutate_chance = 10;
           let mutation = Math.random() * 100;
           if (y % 2 === 0) {
-            spd = best1.moveTime;
+            spd = best1.moveGap;
             form = best2.key;
           }
           else {
-            spd = best2.moveTime;
+            spd = best2.moveGap;
             form = best1.key;
           }
           if (mutation <= mutate_chance) {
             if (mutation < 5) {
-              spd = moveTime;
+              spd = moveGap;
             }
             else {
               form = type;
@@ -111,32 +122,34 @@ export class GameScene extends Phaser.Scene {
               scene: this,
               x: 20 + x * 15,
               y: 50 + y * 15,
-              moveTime: spd,
+              moveGap: spd,
               key: form,
-              id: id
+              id: id,
+              player: this.player
             })
           );
           this.generation.enemies.push({
-            moveTime: spd,
+            moveGap: spd,
             key: form,
             fitness: 0
           });
           id++;
         } else {
           let id = 0;
-          const moveTime = Math.floor(Math.random() * 5000) + 2000;
+          const moveGap = Phaser.Math.RND.between(-50, 50);
           this.enemies.add(
             new Enemy({
               scene: this,
               x: 20 + x * 15,
               y: 50 + y * 15,
-              moveTime: moveTime,
+              moveGap: moveGap,
               key: type,
-              id: id
+              id: id,
+              player: this.player
             })
           );
           this.generation.enemies.push({
-            moveTime: moveTime,
+            moveGap: moveGap,
             key: type,
             fitness: 0
           });
@@ -167,14 +180,17 @@ export class GameScene extends Phaser.Scene {
       this.checkCollisions();
     }
 
-    if (this.registry.get('lives') < 0 || this.enemies.getLength() === 0) {
-      this.registry.set('level', this.registry.get('level') + 1);
-      this.generation.enemies.map((enemy: Enemy) => {
-        enemy.fitness++;
-        return enemy;
-      });
-      localStorage.setItem('generation', JSON.stringify(this.generation));
+    this.registry.set('level', this.registry.get('level') + 1);
+    this.enemies.children.each((enemy: Enemy) => {
+      if (enemy.active) {
+        this.generation.enemies[enemy.id].fitness++;
+      }
+      return enemy;
+    }, this);
 
+    if (this.registry.get('lives') < 0 || this.enemies.getLength() === 0) {
+      
+      localStorage.setItem('generation', JSON.stringify(this.generation));
       this.scene.start('MenuScene');
       this.scene.stop('HUDScene');
     }

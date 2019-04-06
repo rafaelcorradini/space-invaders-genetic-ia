@@ -73,12 +73,22 @@ export class Player extends Phaser.GameObjects.Image {
     
   }
 
+  // fly randomly respecting screen limits
   private handleFlyingRandom(): void {
-    if (Phaser.Math.RND.between(0, 10) === 0) {
-      this.body.setVelocityX(Phaser.Math.RND.between(-100, 100));
-    }    
+    const direction = Phaser.Math.RND.between(-1, 1);
+    if (
+      this.x < this.currentScene.sys.canvas.width - this.width / 2 &&
+      this.x > this.width / 2
+    ) {
+      this.body.setVelocityX(direction * this.flyingSpeed);
+    } else if (this.x >= this.width / 2) {
+      this.body.setVelocityX(-1 * this.flyingSpeed);
+    } else {
+      this.body.setVelocityX(1 * this.flyingSpeed);
+    }
   }
 
+  // fly with keyboard
   private handleFlying(): void {
     if (
       this.cursors.right.isDown &&
