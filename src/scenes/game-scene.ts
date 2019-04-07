@@ -171,7 +171,7 @@ export class GameScene extends Phaser.Scene {
             enemy.getBullets(),
             this.player,
             this.bulletHitPlayer,
-            () => enemy.fitness++,
+            () => this.generation.enemies[enemy.id].fitness += 10,
             this
           );
         }
@@ -180,19 +180,29 @@ export class GameScene extends Phaser.Scene {
       this.checkCollisions();
     }
 
-    this.registry.set('level', this.registry.get('level') + 1);
-    this.enemies.children.each((enemy: Enemy) => {
-      if (enemy.active) {
-        this.generation.enemies[enemy.id].fitness++;
-      }
-      return enemy;
-    }, this);
-
-    if (this.registry.get('lives') < 0 || this.enemies.getLength() === 0) {
+  
+    if (this.registry.get('lives') <= 0 || this.enemies.getLength() === 0) {
+      this.enemies.getChildren().map((enemy: Enemy) => {
+        if (enemy.active) {
+          this.generation.enemies[enemy.id].fitness += 5;
+        }
+        return enemy;
+      }, this);
       
       localStorage.setItem('generation', JSON.stringify(this.generation));
-      this.scene.start('MenuScene');
-      this.scene.stop('HUDScene');
+      if (this.registry.get('random')) {
+        this.registry.set('lives', 3);
+        this.events.emit("livesChanged");
+        this.scene.restart();
+      } else {
+        if (this.enemies.getLength() !== 0) {
+          this.registry.set('points', 0);
+          this.scene.start('MenuScene');
+          this.scene.stop('HUDScene');
+        } else {
+          this.scene.restart();
+        }
+      }
     }
   }
 

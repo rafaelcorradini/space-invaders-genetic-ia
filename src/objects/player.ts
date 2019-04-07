@@ -9,7 +9,7 @@ export class Player extends Phaser.GameObjects.Image {
   private shootingKey: Phaser.Input.Keyboard.Key;
   private randomKey: Phaser.Input.Keyboard.Key;
   private normalKey: Phaser.Input.Keyboard.Key;
-  private random: boolean = false;
+
   public getBullets(): Phaser.GameObjects.Group {
     return this.bullets;
   }
@@ -58,12 +58,12 @@ export class Player extends Phaser.GameObjects.Image {
 
   update(): void {
     if (this.randomKey.isDown) {
-      this.random = true;
+      this.currentScene.registry.set('random', true);
     }
     if (this.normalKey.isDown) {
-      this.random = false;
+      this.currentScene.registry.set('random', false);
     }
-    if (this.random) {
+    if (this.currentScene.registry.get('random')) {
       this.handleFlyingRandom();
       this.handleShootingRandom();
     } else {
@@ -159,6 +159,7 @@ export class Player extends Phaser.GameObjects.Image {
     let currentLives = this.currentScene.registry.get("lives");
     this.currentScene.registry.set("lives", currentLives - 1);
     this.currentScene.events.emit("livesChanged");
+    
     // reset position
     this.cursors.down.isDown = false;
     this.cursors.right.isDown = false;

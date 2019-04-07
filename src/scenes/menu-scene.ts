@@ -72,5 +72,5 @@ export class MenuScene extends Phaser.Scene {
   private initRegistry(): void {
     this.registry.set("points", this.registry.get("points"));
     this.registry.set("lives", 3);
-    }
+  }
 }

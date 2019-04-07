@@ -24,7 +24,7 @@ export class HUDScene extends Phaser.Scene {
         10,
         this.scene.systems.canvas.height - 20,
         "font",
-        `Lives: ${this.registry.get("lives")}`,
+        `Lifes: ${this.registry.get("lives")}`,
         8
       )
     );
